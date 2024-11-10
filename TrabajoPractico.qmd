@@ -1,0 +1,879 @@
+---
+title: "Trabajo Práctico"
+author: Gonzalo Antonio Delgado Rubio
+date: "2024-11-08"
+format: 
+  html: 
+    embed-resources: true
+    code-fold: false
+execute:
+  echo: false
+editor: source
+---
+
+# Índice
+
+1.  [Introducción](#introduccion)
+2.  [Comparaciones](#comparaciones)
+3.  [Distribuciones](#distribuciones)
+4.  [Relaciones](#relaciones)
+5.  [Series Temporales](#series-temporales)
+6.  [Inciertos](#inciertos)
+7.  [Conclusiones](#conclusiones)
+
+# 1. Introducción {#introduccion}
+
+**Objetivo**: Desarrollo del **30DayChartChallenge**
+
+![](imagenes/Challenge.jpg)
+
+> **Nota**: Si recibes el error "`! Could not find tools necessary to compile a package`", es probable que necesites instalar Rtools. Puedes descargarlo desde el siguiente enlace: [Rtools para Windows](https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html).
+
+```{r}
+#| message: false
+#| warning: false
+
+# instalamos los paquetes si hace falta
+if(!require("tidyverse")) install.packages("tidyverse")
+if(!require("janitor")) install.packages("janitor")
+if(!require("patchwork")) install.packages("patchwork")
+if(!require("RODBC")) install.packages("RODBC")
+if(!require("ggrepel")) install.packages("ggrepel")
+
+if (!requireNamespace("tidyr", quietly = TRUE)) install.packages("tidyr")
+if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
+if (!requireNamespace("ggplot2", quietly = TRUE)) install.packages("ggplot2")
+if (!requireNamespace("readr", quietly = TRUE)) install.packages("readr")
+
+# paquetes
+library(tidyverse)
+library(ggrepel)
+library(readxl)
+library(janitor)
+library(patchwork)
+library(RODBC)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(readr)
+```
+
+# 2. Comparaciones {#comparaciones}
+
+## - Day 1: Part to Whole
+
+@fig-financial Volumen de Ventas por país para los años 2013-2014
+
+```{r}
+#| label: fig-financial
+#| fig-cap: "Gráfico financiero de Power BI"
+#| warning: false
+
+# Usando PowerBi
+knitr::include_url("https://app.powerbi.com/view?r=eyJrIjoiYjYwNThmMjUtZDg1Ni00MWIyLWE4ZTgtYjgxODk0OTAxNDI2IiwidCI6IjFlYmE0NDNmLTIzZTUtNDUzNC05MGQxLTA5NzZhYWJlODZhYyIsImMiOjR9&pageName=76fada1000860c1cd51e", height = "374px")
+```
+
+Figura1:
+
+**Fuente de Datos**: Este gráfico está basado en los [muestra financieros](https://learn.microsoft.com/en-us/power-bi/create-reports/sample-financial-download) de Microsoft, específicamente del conjunto de datos disponible en Power BI para informes financieros.
+
+**Audiencia**: Este análisis está dirigido a gerentes financieros, analistas de datos y ejecutivos que necesitan entender la salud financiera de la organización.
+
+**Objetivo**: El gráfico busca mostrar de manera clara el total de ventas de la compañia durante los años 2013 - 2014 según el país y el porcentaje que representa este para el total de ventas de la compañia.
+
+**Mensaje**: La visualización revela que, USA concentra el 21% del total de las ventas de la empresa seguido muy de cerca por Canadá y Francia.
+
+**Tipo de Visualización**: Utilizamos un gráfico de pastel(Pie chart) que refleje este total de ventas.
+
+**Herramientas**: Para crear este gráfico, utilizamos Power BI, que proporciona herramientas avanzadas de visualización y análisis de datos, permitiendo a los usuarios personalizar las visualizaciones para facilitar la interpretación de los datos.
+
+## - Day 2: Neo
+
+@fig-airquality further explores the impact of temperature on ozone level.
+
+```{r}
+#| label: fig-airquality
+#| fig-cap: "Gráfico financiero de Power BI"
+#| warning: false
+
+# Usando PowerBi
+knitr::include_url("https://app.powerbi.com/view?r=eyJrIjoiYjYwNThmMjUtZDg1Ni00MWIyLWE4ZTgtYjgxODk0OTAxNDI2IiwidCI6IjFlYmE0NDNmLTIzZTUtNDUzNC05MGQxLTA5NzZhYWJlODZhYyIsImMiOjR9", height = "374px")
+```
+
+**Fuente de Datos**: Este gráfico está basado en los [muestra financieros](https://learn.microsoft.com/en-us/power-bi/create-reports/sample-financial-download) de Microsoft, específicamente del conjunto de datos disponible en Power BI para informes financieros.
+
+**Audiencia**: Este análisis está dirigido a gerentes financieros, analistas de datos y ejecutivos que necesitan entender la salud financiera de la organización.
+
+**Objetivo**: El gráfico busca mostrar de manera clara la evolución del total de ventas de la compañia para los años 2013 - 2014 según el país.
+
+**Mensaje**: La visualización revela que todos los paises han tenido un nivel significativo de las ventas durante esos años.
+
+**Tipo de Visualización**: Utilizamos un gráfico de Barras Agrupado(Bar Chart) para reflejar el incremento entre los años.
+
+**Herramientas**: Para crear este gráfico, utilizamos Power BI, que proporciona herramientas avanzadas de visualización y análisis de datos, permitiendo a los usuarios personalizar las visualizaciones para facilitar la interpretación de los datos.
+
+## - Day 3: Makeover
+
+@fig-tip-ori Grafico Original
+
+```{r}
+#| label: fig-tip-ori
+#| fig-tip-ori: "Porcentaje de Personas que dan Propina por Pais"
+#| warning: false
+
+# Usando DataWrapper
+knitr::include_url("https://datawrapper.dwcdn.net/xk7I8/4/", height = 600)
+```
+
+@fig-tip Grafico MakeOver.
+
+```{r}
+#| label: fig-tip
+#| fig-tip: "[MakeOver] Porcentaje de Personas que dan Propina por Pais"
+#| warning: false
+
+# Usando DataWrapper
+knitr::include_url("https://datawrapper.dwcdn.net/YemC3/1/", height = 600)
+```
+
+**Fuente de Datos**: Este gráfico está basado en los [muestra Tipping in Europe and America](https://app.datawrapper.de/chart/pGMzB/upload) de DataWrapper, seccion de carga de datos muestra
+
+**Audiencia**: Este análisis está dirigido al publico en general que esta interesado en este tipo de información
+
+**Objetivo**: El gráfico busca mostrar el porcentaje de personas que suele brindar algún tipo de propina a los meseros o barberos de ciertos paises.
+
+**Mensaje**: La visualización revela que todos los paises han tenido un nivel significativo de las ventas durante esos años.
+
+**Tipo de Visualización**:
+
+-   **Barras Divididas**: Empleado originalmente y el que muestra la división de nuestros datos según las consultas realizadas en la encuesta
+
+-   **Barras Agrupadas**: Lo realizamos para la sección de makeover para que pueda reflejar de una manera más adecuada la totalidad del conjunto de datos
+
+**Herramientas**: Para crear este gráfico, utilizamos DataWrapper, que nos permite crear gráficos de manera gratuita permitiendonos compartiendo compartirlos en la web.
+
+## - Day 4: Waffle
+
+@fig-waffle Grafico Waffle.
+
+```{r}
+#| label: fig-waffle
+#| fig-waffle: "Porcentaje de Usuarios Activos por Producto Microsoft"
+#| warning: false
+
+# Usando DataWrapper
+knitr::include_url("https://app.powerbi.com/view?r=eyJrIjoiZDc0NDhhN2MtNjE0NC00OGVlLWI5YTItYzYxYmFiYWIzZjZjIiwidCI6IjFlYmE0NDNmLTIzZTUtNDUzNC05MGQxLTA5NzZhYWJlODZhYyIsImMiOjR9", height = 600)
+```
+
+**Fuente de Datos**: Este gráfico está basado en los muestra de datos de productos de microsoft.
+
+**Audiencia**: Este análisis está dirigido a la gerencia de microsoft
+
+**Objetivo**: El gráfico busca mostrar el porcentaje de usuarios activos por producto de microsoft.
+
+**Mensaje**: La visualización que hay un gran porcentaje de usuarios que sigue empleando productos como Windows 98, Server 2008 y Server 2012.
+
+**Tipo de Visualización**:
+
+-   **Waffle**: Se represento cada uno de los productos de microsoft mediante este tipo de gráfico y se muestra el porcentaje de usuarios activos por producto
+
+**Herramientas**: Para crear este gráfico, utilizamos Power BI, que proporciona herramientas avanzadas de visualización y análisis de datos, permitiendo a los usuarios personalizar las visualizaciones para facilitar la interpretación de los datos.
+
+## - Day 5: Divering
+
+```{r}
+#| message: false
+#| warning: false
+#| 
+
+library(readxl)
+
+# Leer datos
+data <- read_excel("C:/Users/Gonzalo/Desktop/visualizacion/practica1Visualizacion/datasets/survey.xlsx")
+
+# Transformar datos
+data_long <- data %>%
+  pivot_longer(cols = -c(Job, Nation), names_to = "Tipping_Habit", values_to = "Percentage") %>%
+  mutate(Tipping_Habit = factor(Tipping_Habit, levels = c("I typically tip", "I do not typically tip, but I might sometimes tip", 
+                                                          "Don't know", "I never tip")))
+
+# Ajustar categorías en positivas, negativas y neutral
+data_long <- data_long %>%
+  mutate(Percentage = case_when(
+    Tipping_Habit %in% c("I typically tip", "I do not typically tip, but I might sometimes tip") ~ Percentage,
+    Tipping_Habit == "I never tip" ~ -Percentage,
+    TRUE ~ Percentage  # Dejar "Don't know" sin invertir
+  ))
+
+# Crear gráfico divergente
+g_divergente <- ggplot(data_long, aes(x = Nation, y = Percentage, fill = Tipping_Habit)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = paste0(abs(round(Percentage)), "%")),  # Etiquetas sin decimales
+            position = position_stack(vjust = 0.5), color = "black", size = 2.5) +  # Etiquetas en negro y más pequeñas
+  coord_flip() +
+  scale_fill_manual(values = c("darkgreen", "lightgreen", "grey70", "darkred")) +  # "grey70" para "Don't know"
+  labs(
+    title = "Tendencias de Propinas en Distintos Países y Ocupaciones",
+    x = "País",
+    y = "Porcentaje"
+  ) +
+  facet_wrap(~ Job, ncol = 1) +
+  theme_minimal() +
+  theme(
+    legend.position = "top",
+    legend.title = element_text(size = 10),   # Tamaño del título de la leyenda
+    legend.text = element_text(size = 8)      # Tamaño del texto de la leyenda
+  )
+
+# Mostrar el gráfico
+g_divergente
+```
+
+**Fuente de Datos**: Este gráfico está basado en una encuesta de tendencias de propinas en distintos países y ocupaciones, recopilada de una muestra representativa de consumidores.
+
+**Audiencia**: Este análisis está dirigido a la gerencia y al equipo de operaciones en la industria de servicios para entender las costumbres de propinas en varios países.
+
+**Objetivo**: El gráfico busca ilustrar la variabilidad en las prácticas de propinas en distintos países, destacando las diferencias culturales que pueden impactar en las políticas de servicio y capacitación.
+
+**Mensaje**: La visualización sugiere que las prácticas de propinas varían significativamente, siendo mucho más comunes en algunos países como EE.UU. y Alemania, mientras que otros, como Dinamarca y Suecia, tienen porcentajes más bajos de usuarios que dan propinas regularmente.
+
+**Tipo de Visualización**: Gráfico divergente, que muestra las prácticas de propinas en distintas direcciones (tip positivo o negativo) por país y ocupación, facilitando la comparación de respuestas entre países.
+
+**Herramientas**: Para crear este gráfico, se utilizó R, utilizando las librerías de visualización para facilitar la interpretación.
+
+## - Day 6: OECD
+
+@fig-oecd Grafico OECD.
+
+```{r}
+#| message: false
+#| warning: false
+#| 
+
+#| label: fig-oecd
+#| fig-oecd: "Cambio Anual de Temperatura (C) Paises OCDE"
+#| warning: false
+
+# Usando DataWrapper
+knitr::include_url("https://datawrapper.dwcdn.net/D41BQ/4/", height = 600)
+
+```
+
+**Fuente de Datos**: Este gráfico se basa en datos de cambio climático, específicamente en la variación anual de temperatura en diferentes años. La [fuente de los datos](https://www.oecd.org/en/data/dashboards/climate-action-dashboard.html) es la OCDE
+
+**Audiencia**: Este análisis está dirigido a investigadores, formuladores de políticas y organizaciones ambientales para comprender las fluctuaciones anuales en la temperatura y sus implicancias en el cambio climático.
+
+**Objetivo**: El gráfico busca ilustrar la variabilidad anual en la temperatura global, destacando los años en los que la temperatura se desvió significativamente de los valores medios, lo cual puede ayudar a identificar patrones y eventos climáticos importantes.
+
+**Mensaje**: La visualización sugiere que las variaciones anuales de temperatura han fluctuado con el tiempo, con períodos de calentamiento y enfriamiento. Estas tendencias subrayan la naturaleza cambiante del clima y proporcionan un contexto sobre cómo las temperaturas han respondido a distintos factores climáticos.
+
+**Tipo de Visualización**: Gráfico de líneas que muestra la variación anual de la temperatura, facilitando la identificación de años específicos de aumento o disminución en la temperatura media global.
+
+**Herramientas**: Para crear este gráfico, se utilizó DataWrapper.
+
+# 3. Distribuciones {#distribuciones}
+
+## - Day 7: Hazard
+
+![](imagenes/crimen.png)
+
+**Fuente de Datos:** Este gráfico está basado en los datos de kaggle de crimenes en Vancouver. [dataset](https://www.kaggle.com/datasets/wosaku/crime-in-vancouver?select=crime.csv)
+
+**Audiencia**: Este análisis está dirigido a los analistas de la policia de Vancouver para que puedan entender los crimenes que se comenten en la ciudad y poder realizar estrategias para evitarlos.
+
+**Objetivo**: El gráfico busca mostrar los top 5 vecindarios en Vancouver con mayor indice delictivo y los tipos de crimenes que se cometen en estos.
+
+**Mensaje**: La visualización revela que el Vecindario de Central Bussiness District es la que tiene mayor indice delictivo. Además vemos que para todos los vecindarios el crimen más común es el de robo de vehículo.
+
+**Tipo de Visualización**: Utilizamos un gráfico de barras que nos permita comparar los crimenes reportados por tipo.
+
+**Herramientas**: Para crear este gráfico, utilizamos Python.
+
+## - Day 8: Circular
+
+@fig-ganancia Grafico Circular
+
+```{r}
+#| message: false
+#| warning: false
+#| label: fig-ganancia
+#| fig-ganancia: "Grafico Circular Ganancias por Producto"
+
+# Leer datos
+data <- read_excel("C:/Users/Gonzalo/Desktop/visualizacion/practica1Visualizacion/datasets/Financial.xlsx")
+
+# Preparar los datos para el gráfico
+data_summary <- data %>%
+  group_by(Product) %>%
+  summarise(Total_Profit = sum(Profit, na.rm = TRUE))
+
+# Crear el gráfico de dona
+g_circular <- ggplot(data_summary, aes(x = "", y = Total_Profit, fill = Product)) +
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar(theta = "y") +
+  theme_void() +
+  labs(title = "Distribución de Ganancias por Producto") +
+  theme(legend.position = "right") +
+  geom_text(aes(label = scales::percent(Total_Profit / sum(Total_Profit), accuracy = 0.1)),
+            position = position_stack(vjust = 0.5))
+
+g_circular
+```
+
+**Fuente de Datos:** Este gráfico está basado en los datos financieros de Microsoft, específicamente del conjunto de datos disponible en Power BI para informes financieros.
+
+**Audiencia**: Este análisis está dirigido a gerentes financieros, analistas de datos y ejecutivos que necesitan entender la salud financiera de la organización.
+
+**Objetivo**: El gráfico busca mostrar de manera clara el porcentaje de las ganancias obtenidas por los productos de la compañia durante los años 2013 - 2014.
+
+**Mensaje**: La visualización revela que el producto que ha producido mayores ganancias fue el Velo con un 28.4%.
+
+**Tipo de Visualización**: Utilizamos un gráfico de circular que refleje este total de ventas según cada uno de los productos de la empresa.
+
+**Herramientas**: Para crear este gráfico, utilizamos R que proporcionan herramientas avanzadas de visualización y análisis de datos.
+
+## - Day 9: Major/minor
+
+@fig-major Grafico Barras Tweets por Dia de la Semana
+
+```{r}
+#| message: false
+#| warning: false
+#| label: fig-major
+#| fig-major: "Cantidad de Tweets realizados según el día de la semana"
+
+# Usando DataWrapper
+knitr::include_url("https://charts.mongodb.com/charts-project-0-fqvitlc/embed/charts?id=6646eb16-0ec5-4459-87c5-e27e42636f2c&maxDataAge=3600&theme=light&autoRefresh=true", height = 600)
+```
+
+**Fuente de Datos:** Este gráfico esta basado en datos de muestra de Tweeter.
+
+**Audiencia**: Este análisis está dirigido a los ejecutivos de la empresa que buscan entender la dinamica de las personas que realiza tweets..
+
+**Objetivo**: El gráfico busca mostrar la cantidad de tweets que realizan las personas y en que dia de la semana hay más frecuencia en que los realicen.
+
+**Mensaje**: La visualización que los dias Jueves son los días en que más se realizan tweets.
+
+**Tipo de Visualización**: Utilizamos un gráfico de barra horizontal según el día de la semana para entender de forma más clara los datos.
+
+**Herramientas**: Para crear este gráfico, utilizamos la herramienta integrada de gráficos de Mongo DB Atlas. La cual permite realizar análisis a nuestros datos no estructurados de manera rápida y precisa.
+
+## - Day 10: Physical
+
+![](imagenes/physical.png)
+
+**Fuente de Datos:** Este gráfico esta basado en los datos expuestos web de statistica [aguacate dataset](https://es.statista.com/estadisticas/1263632/mayores-exportadores-de-aguacate-en-el-mundo/).
+
+**Audiencia**: Este análisis está dirigido a los empresarios que necesitan tener conocimiento del volumen de expotación de los paises según el producto.
+
+**Objetivo**: El gráfico busca mostrar el el volumen de ventas de los top 5 paises que exportan más aguacate en el mundo.
+
+**Mensaje**: El gráfico muestra que México se posiciona por lejos como el país que exporta más aguacate a nivel global.
+
+**Tipo de Visualización**: Utilizamos una representación fisica de nuestro dato para representar el volumen de ventas en las exportaciones de aguacates según los top 5 paises.
+
+**Herramientas**: Para crear este gráfico, se elaboró empleando Power Point dada que es una herramienta versatil para este tipo de graficos como infografia.
+
+## - Day 11: Mobile-friendly
+
+@fig-mobile-friendly Gráfico de Cantidad de Amigos por Cuenta de Tweeter
+
+```{r}
+#| message: false 
+#| warning: false 
+#| label: fig-mobile-friendly
+#| fig-mobile-friendly: "Gráfico de Cantidad de Amigos por Cuenta de Tweeter"  
+
+# Usando DataWrapper 
+knitr::include_url("https://charts.mongodb.com/charts-project-0-fqvitlc/embed/charts?id=6646ec3f-af64-4f97-86e9-b0143b6dc08d&maxDataAge=3600&theme=light&autoRefresh=true", height = 480)
+```
+
+**Fuente de Datos:** Este gráfico esta basado en datos de muestra de Tweeter.
+
+**Audiencia**: Este análisis está dirigido al publico en general que quisiera conocer las cuentas más populares en tweeter y la cantidad de seguidores que posee.
+
+**Objetivo**: El gráfico busca mostrar la cantidad de seguidores que tiene una persona en tweeter.
+
+**Mensaje**: La visualización nos muestra que el usuario "sanchezcastejon" posee la mayor cantidad de seguidores en tweeter.
+
+**Tipo de Visualización**: Utilizamos un gráfico de barra vertical para poder apreciar los datos.
+
+**Herramientas**: Para crear este gráfico, utilizamos la herramienta integrada de gráficos de Mongo DB Atlas. La cual permite realizar análisis a nuestros datos no estructurados de manera rápida y precisa.
+
+## - Day 12: Reuters Graphics
+
+@fig-reuters **Índice de igualdad legal LGBT+, 2024**
+
+```{r}
+#| message: false 
+#| warning: false 
+#| label: fig-reuters
+#| fig-reuters: "Indice de igualdad legal LGBT+, 2024"  
+
+# Usando DataWrapper 
+knitr::include_url("https://datawrapper.dwcdn.net/jFuWt/2/", height = 500)
+```
+
+**Fuente de Datos:** Este gráfico esta basado en datos de la pagina our world in data. Puede descargar el dataset [aqui](https://ourworldindata.org/lgbt-rights)
+
+**Audiencia**: Este análisis está dirigido al publico en general que quisiera conocer acerca de como se encuentra los indices de igualdad por país.
+
+**Objetivo**: El gráfico busca mostrar el índice de igualdad según el país.
+
+**Mensaje**: La visualización nos indica que paises como Estados Unidos o Cánada tienen iguales derechos que las personas que no son LGBT+.
+
+**Tipo de Visualización**: Utilizamos un mapa para explicar la información por pais.
+
+**Herramientas**: Para crear este gráfico hemos empleado DataWrapper
+
+# 4. Relaciones {#relaciones}
+
+## - Day 13: Family
+
+@fig-family Gráfico Jerarjico People Analytics
+
+```{r}
+#| message: false  
+#| warning: false  
+#| label: fig-family 
+#| fig-family : "Gráfico Jerarjico People Analytics"    
+
+
+# Usando PowerBI
+knitr::include_url("https://app.powerbi.com/view?r=eyJrIjoiOWJkYzkxN2ItOTkwOC00ZmM0LTlmZTItYmI4YzQwMDUyYzkyIiwidCI6IjFlYmE0NDNmLTIzZTUtNDUzNC05MGQxLTA5NzZhYWJlODZhYyIsImMiOjR9", height = 400)
+```
+
+**Fuente de Datos:** Este gráfico esta basado en datos de empleados tomados del repositorio de kaggle [hr_analytics_atracction](https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset?resource=download).
+
+**Audiencia**: Este análisis está dirigido al personal de recursos humanos que busca entender como se encuentra compuesta la compañia. Los niveles de estudios por area, tipo de empleo que tiene el personal, etc.
+
+**Objetivo**: El gráfico busca mostrar la composión de los empleados para la compañia en niveles jerarquicos.
+
+**Mensaje**: La visualización nos muestra que la mayoria del personal de la empresa es de genero másculino, de status casado y trabajan en el departamenteo de investigación y desarrollo.
+
+**Tipo de Visualización**: Utilizamos un gráfico jerarquico para que nos ayude a entender los niveles de jerarquia presentes en el personal de la compañia
+
+**Herramientas**: Para crear este gráfico, utilizamos Power BI, que proporciona herramientas avanzadas de visualización y análisis de datos, permitiendo a los usuarios personalizar las visualizaciones para facilitar la interpretación de los datos.
+
+## - Day 14: Heatmap
+
+#### Análisis de Correlación Entre Variables de Dataset Travel Insurance
+
+![](imagenes/heatmap.png)
+
+**Fuente de Datos:** Este gráfico esta basado en datos del kagle [travel-insurance](https://www.kaggle.com/datasets/mhdzahier/travel-insurance/data).
+
+**Audiencia**: Este análisis está dirigido para el equipo de data scientist que se encuentra realizando el análisis exploratorio del dataset
+
+**Objetivo**: El gráfico busca encontrar variables que se encuentre fuertemente correlacionadas y puedan influenciar en el modelo final.
+
+**Mensaje**: El gráfico nos muestra una correlación positiva entre las variables net_sales y commision. Procesamiento Dataset completo en [link](https://github.com/gdelgador/MineriaDatos/blob/main/Actividad1.ipynb)
+
+**Tipo de Visualización**: Utilizamos el mapa de calor que nos permite encontrar este tipo de relaciones entre variables.
+
+**Herramientas**: Para crear este gráfico, utilizamos el lenguaje Python para poder realizar este estudio de análisis de los datos.
+
+## - Day 15: Historical
+
+@fig-historical Gráfico del Avance Histórico de la Civilización Humana a lo largo del Tiempo (500 - 2020)
+
+![](imagenes/historical.png)
+
+**Fuente de Datos**: Este gráfico se basa en datos de conocimiento públicos que muestran el avance de la civilización en los aspectos de tecnología, economía y cultura desde el año 500 hasta el año 2020.
+
+**Audiencia**: Este análisis está dirigido a académicos, historiadores, y entusiastas de los avances tecnológicos, culturales y económicos que buscan entender cómo estos tres aspectos fundamentales han progresado a lo largo de la historia.
+
+**Objetivo**: El gráfico tiene como objetivo mostrar el crecimiento relativo en los avances tecnológicos, económicos y culturales de la civilización en una escala temporal. Los hitos tecnológicos resaltados ayudan a visualizar los puntos clave que impulsaron el desarrollo en cada aspecto, aportando una perspectiva sobre los factores que han moldeado la civilización moderna.
+
+**Mensaje**: La visualización destaca una correlación general entre los avances en tecnología, economía y cultura, indicando cómo los hitos tecnológicos importantes han sido acompañados, o han promovido, un desarrollo en otros aspectos. Esto sugiere una interdependencia entre estos factores en la evolución de las sociedades.
+
+**Tipo de Visualización**: Se ha utilizado una línea de tiempo múltiple, representando cada aspecto (tecnología, economía y cultura) con una línea distinta. Se han añadido anotaciones en hitos específicos para mejorar la comprensión de los avances en tecnología y su relación con el progreso general de la civilización.
+
+**Herramientas**: Para crear este gráfico, se utilizó Python que permite agregar anotaciones y personalizar las líneas de progreso, facilitando una visualización clara y atractiva de los datos históricos y su evolución en el tiempo.
+
+## - Day 16: Weather
+
+@fig-weather Gráfico Temperatura Año 2015
+
+```{r}
+#| message: false   
+#| warning: false   
+#| label: fig-weather 
+#| fig-weather : "Gráfico Temperatura"       
+
+# Usando PowerBI
+
+knitr::include_url("https://app.powerbi.com/view?r=eyJrIjoiY2E4ZmQ4NWYtZWI5Mi00MzU0LWE3ODAtY2JlZWM2ODcwYTIxIiwidCI6IjFlYmE0NDNmLTIzZTUtNDUzNC05MGQxLTA5NzZhYWJlODZhYyIsImMiOjR9", height = 400)
+```
+
+**Fuente de Datos:** Este gráfico esta basado en datos del clima del repositorio de kaggle [weather dataset](https://www.kaggle.com/datasets/muthuj7/weather-dataset/data).
+
+**Audiencia**: Este análisis esta dirigido al servicio nacional de climatologia que necesita entender el comportamiento de la temperatura a lo largo del año 2015.
+
+**Objetivo**: El gráfico busca mostrar la temperatura promedio, temperatura máxima y mínima en cierta región del país.
+
+**Mensaje**: La visualización nos muestra grandes picos de temperatura en los periodos de verano donde se tuvo una máxima temperatura de 37,2 grados para el mes de Julio.
+
+**Tipo de Visualización:** Se ha utilizado un gráfico de barras y de lineas para mostrar los valores de temperatura promedio, temperatura máxima y temperatura mínima.
+
+**Herramientas:** Para crear este gráfico, utilizamos Power BI, que proporciona herramientas avanzadas de visualización y análisis de datos, permitiendo a los usuarios personalizar las visualizaciones para facilitar la interpretación de los datos.
+
+## - Day 17: Networks
+
+![](imagenes/network.png)
+
+**Fuente de Datos:** Este gráfico está basado en datos internos de la empresa que muestran la estructura jerárquica y organizacional de empleados y sus respectivos departamentos.
+
+**Audiencia:** Este análisis está dirigido al equipo de recursos humanos y a los gerentes de departamento para visualizar la estructura organizacional y entender mejor las relaciones jerárquicas entre los empleados.
+
+**Objetivo:** El gráfico busca visualizar la jerarquía de empleados dentro de la empresa, permitiendo identificar rápidamente quién reporta a quién, así como el departamento y salario asociado a cada empleado.
+
+**Mensaje:** La visualización muestra claramente la jerarquía y las relaciones entre empleados y sus supervisores, agrupando por colores a aquellos que pertenecen al mismo departamento, lo cual facilita identificar áreas organizativas específicas.
+
+**Tipo de Visualización:** Se ha utilizado un gráfico de redes que permite observar de forma visual la estructura de la organización. Los nodos representan a los empleados, y las conexiones representan las relaciones de supervisión. Los colores diferencian a los empleados según su departamento.
+
+**Herramientas:** Para crear este gráfico, se utilizó Python y librerías de visualización como NetworkX y Matplotlib, lo cual permitió construir un gráfico de redes que ilustra la estructura jerárquica y organizacional de forma intuitiva.
+
+## - Day 18: Asian Development Bank
+
+@fig-asian-bank Gráfico Monto de Inversión en Proyectos de Cambio Climatico
+
+```{r}
+#| message: false   
+#| warning: false   
+#| label: fig-asian-bank 
+#| fig-asian-bank : "Gráfico Monto de Inversión en Proyectos de Cambio Climatico"       
+
+# Usando PowerBI
+
+knitr::include_url("https://app.powerbi.com/view?r=eyJrIjoiNTY4N2ZlYzUtYTY1Ny00NGNmLWIyOGYtMDliOGI4NzBmYWZiIiwidCI6IjFlYmE0NDNmLTIzZTUtNDUzNC05MGQxLTA5NzZhYWJlODZhYyIsImMiOjR9", height = 400)
+```
+
+**Fuente de Datos:** Este gráfico esta basado en los datos brindados por el Banco de Desarrollo Asiatico. Especificamente su [Climate Change Financing at ADB](https://data.adb.org/dataset/climate-change-financing-adb)
+
+**Audiencia:** Esta visualización está dirigida a los miembros del equipo de análisis y sostenibilidad del Banco de Desarrollo Asiático, así como a los responsables de la toma de decisiones en políticas de financiamiento climático.
+
+**Objetivo:** El gráfico tiene como objetivo resaltar las áreas de inversión en financiamiento climático de ADB y mostrar la evolución de estos fondos en los últimos años, brindando una perspectiva clara sobre el impacto financiero destinado a combatir el cambio climático en los países en desarrollo de Asia y el Pacífico.
+
+**Mensaje:** La visualización muestra cómo las inversiones de ADB en financiamiento climático se han distribuido en distintos sectores clave, tales como energía renovable, gestión de recursos hídricos, y adaptación al cambio climático. Esto permite a los analistas identificar las áreas con mayor asignación de fondos y analizar la eficiencia del uso de estos recursos para mitigar los efectos del cambio climático.
+
+**Tipo de Visualización:** Se ha utilizado un gráfico de barras apiladas para representar la distribución del financiamiento entre diferentes sectores, lo cual facilita la comparación de las áreas de enfoque de ADB en el tiempo y la identificación de cambios en las prioridades de inversión.
+
+**Herramientas:** Para la creación de este gráfico se utilizó Power BI, permitiendo una visualización interactiva que permite a los usuarios explorar los datos en detalle.
+
+# 5. Series Temporales {#series-temporales}
+
+## - Day 19: Dinosaurs
+
+@fig-dinosaurs Gráfico de Estrella
+
+![](imagenes/dinosaurios.png)
+
+**Fuente de Datos:** Datos autogenerados para permitir generar el gráfico
+
+**Audiencia:** Esta visualización esta dirigida a un segmento humoristico
+
+**Objetivo:** El gráfico tiene como objetivo mostrar de manera humorística lo que se puede formar con los datos.
+
+**Mensaje:** La visualización muestra de forma divertida la forma de una estrella con los datos.
+
+**Tipo de Visualización:** Se ha utilizado un gráfico de dispersión.
+
+**Herramientas:** Para la creación de este gráfico se utilizó Python.
+
+## - Day 20: Correlation
+
+@fig-correlation Gráfico Esperanza de Vida vs PBI Per Capita
+
+```{r}
+#| message: false   
+#| warning: false   
+#| label: fig-correlation 
+#| fig-correlation : "Gráfico Esperanza de Vida vs PBI Per Capita"       
+
+# Usando PowerBI
+
+knitr::include_url("https://datawrapper.dwcdn.net/6MgaQ/1/", height = 500)
+
+
+```
+
+**Fuente de Datos:** Este gráfico esta basado en los datos por Our World Data. [link](https://ourworldindata.org/population-growth)
+
+**Audiencia:** Esta visualización esta dirigida a para los economistas y público en general que quiera conocer la relación entre estas 2 variables.
+
+**Objetivo:** El gráfico tiene como objetivo mostrar una relación entre la esperanza de vida y el ingreso per capita de cada país.
+
+**Mensaje:** La visualización muestra la compración de los ingresos per cápita por país vs la esperanza de vida de cada país. Esto nos indica la relación entre estas variables.
+
+**Tipo de Visualización:** Se ha utilizado un gráfico de dispersión.
+
+**Herramientas:** Para la creación de este gráfico se utilizó DataWrapper
+
+## - Day 21: Green Energy
+
+@fig-green-energy Electricidad procedente de combustibles fósiles y fuentes Renovables en (TWh) para España (2000 - 2020)
+
+```{r}
+#| message: false   
+#| warning: false   
+#| label: green-energy 
+#| fig-green-energy : "Electricidad procedente de combustibles fósiles y fuentes Renovables en (TWh) para España (2000 - 2020)"       
+
+# Usando PowerBI
+
+knitr::include_url("https://app.powerbi.com/view?r=eyJrIjoiOTcyNDE0MDctZDU2Yy00YTQ4LTk0ZDItMzIxNmU1OTA1MjFjIiwidCI6IjFlYmE0NDNmLTIzZTUtNDUzNC05MGQxLTA5NzZhYWJlODZhYyIsImMiOjR9", height = 400)
+
+```
+
+**Fuente de Datos:** Este gráfico esta basado en los datos por kaggle [dataset](https://www.kaggle.com/datasets/anshtanwar/global-data-on-sustainable-energy)
+
+**Audiencia:** Esta visualización esta dirigido para los interesados en temas relacionados con el medio ambiente.
+
+**Objetivo:** El gráfico tiene como objetivo mostrar la cantidad de energia generada por fuentes fósiles y renovables.
+
+**Mensaje:** La visualización muestra como ha ido disminuyendo la generación de energía a partir de fuentes fosiles y cambiado a energías renovables en años más recientes.
+
+**Tipo de Visualización:** Se ha utilizado un gráfico de barras y lineas
+
+**Herramientas:** Para la creación de este gráfico se utilizó Power BI
+
+## - Day 22: Mobility
+
+@fig-mobility Inmigrantes Paises Seleccionados
+
+```{r}
+#| message: false   
+#| warning: false   
+#| label: fig-mobility 
+#| fig-mobility : "Inmigrantes Paises Seleccionados"     
+
+knitr::include_url("https://app.powerbi.com/view?r=eyJrIjoiNDYxYTQ1NTctNWIyZS00MzhmLThjMzktZDQxZjJhYTRhMzdiIiwidCI6IjFlYmE0NDNmLTIzZTUtNDUzNC05MGQxLTA5NzZhYWJlODZhYyIsImMiOjR9", height = 600)
+
+```
+
+**Fuente de Datos:** Este gráfico esta basado en los datos por Our World in Data [dataset](https://ourworldindata.org/grapher/migrant-stock-total?tab=chart)
+
+**Audiencia:** Esta visualización esta dirigido para los interesados en temas relacionados con temas de inmigración.
+
+**Objetivo:** El gráfico tiene como objetivo mostrar la cantidad de inmigrantes a traves de los años para ciertos paises seleccionados.
+
+**Mensaje:** La visualización muestra que paises como Argentina ha tenido un flujo muy grande de inmigrantes desde los años 90 hasta la fecha.
+
+**Tipo de Visualización:** Se ha utilizado un gráfico de áreas para mostrar las cantidades de inmigrante a través de los años
+
+**Herramientas:** Para la creación de este gráfico se utilizó Power BI
+
+## - Day 23: Tiles
+
+@fig-tiles Gráfico de Patrones Diarios de Valores 2024
+
+![](imagenes/tiles.png)
+
+**Fuente de Datos**: Este gráfico utiliza datos ficticios generados aleatoriamente para simular variaciones diarias a lo largo del año 2024.
+
+**Audiencia**: Esta visualización está dirigida a analistas de datos o profesionales interesados en identificar patrones y variaciones temporales en conjuntos de datos diarios.
+
+**Objetivo**: El objetivo del gráfico es ilustrar la variación diaria de un valor a lo largo de un año y permitir a los observadores identificar fácilmente patrones estacionales, días de alta o baja actividad, o tendencias semanales.
+
+**Mensaje**: La visualización destaca los días de alta y baja actividad en un año, lo que podría ser útil para analizar comportamientos repetitivos en datos temporales.
+
+**Tipo de Visualización**: Se ha utilizado un gráfico de calor de calendario, en el que cada celda representa un día del año. Los colores indican el valor de cada día, facilitando la detección de patrones y tendencias.
+
+**Herramientas**: Para la creación de este gráfico se utilizó Python.
+
+## - Day 24: ILO Region for Africa
+
+@fig-iloTasa de crecimiento anual de la producción por trabajador
+
+```{r}
+#| message: false   
+#| warning: false   
+#| label: fig-ilo 
+#| fig-ilo : "Tasa de crecimiento anual de la producción por trabajador"       
+
+
+df <- read_excel("C:/Users/Gonzalo/Desktop/visualizacion/practica1Visualizacion/datasets/SDG_0821_NOC_RT_A-20241103T0026.xlsx")
+
+# Renombrar las columnas
+df <- df %>% 
+  rename(
+    pais = ref_area.label,
+    fuente = source.label,
+    tipo = indicator.label,
+    year = time,
+    ratio = obs_value
+  )
+
+# Convertir la columna 'year'
+df <- df %>% mutate(year = as.numeric(year))
+
+# Filtrar los datos para los países Angola, Argelia y Egipto
+paises_interes <- c('Angola', 'Algeria', 'Egypt')
+df_filtrado <- df %>% filter(pais %in% paises_interes)
+
+# Crear el gráfico de líneas
+g_africa <- ggplot(df_filtrado, aes(x = year, y = ratio, color = pais, group = pais)) +
+  geom_line() +
+  geom_point() +
+  # Añadir etiquetas interanuales
+  geom_text(
+    aes(label = round(ratio, 1)),  # Redondear a 1 decimal
+    size = 3,                      # Tamaño de la etiqueta pequeño
+    vjust = -0.5                   # Ajustar la posición vertical de las etiquetas
+  ) +
+  geom_hline(yintercept = 0, linetype = "solid", color = "black", size = 0.5) +  # Línea horizontal en y=0
+  xlim(2000, max(df_filtrado$year, na.rm = TRUE)) +
+  labs(title = "Tasa de crecimiento anual de la producción por trabajador", x = "Año", y = "Ratio", color = "País") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_continuous(breaks = seq(2000, max(df_filtrado$year, na.rm = TRUE), by = 1))
+
+g_africa
+
+```
+
+**Fuente de Datos:** Este gráfico esta basado en los datos por Our World Data. [link](https://ourworldindata.org/population-growth)
+
+**Audiencia:** Esta visualización está dirigida a economistas y al público en general que deseen comprender la relación entre la producción por trabajador y el crecimiento anual de este indicador en diferentes países.
+
+**Objetivo:** El gráfico tiene como objetivo mostrar la tasa de crecimiento anual de la producción por trabajador en países seleccionados: Angola, Argelia y Egipto.
+
+**Mensaje:** La visualización compara la tasa de crecimiento anual de la producción por trabajador en estos países a lo largo de los años. Esto nos permite observar cómo ha evolucionado este indicador y su variabilidad entre los países.
+
+**Tipo de Visualización:** Se ha utilizado un gráfico de líneas para representar la evolución temporal de la producción por trabajador.
+
+**Herramientas:** Para la creación de este gráfico se utilizó R y la biblioteca ggplot2.
+
+# 6. Inciertos {#inciertos}
+
+## - Day 25: Global Change
+
+@fig-global-change **Emisiones globales de CO2 por combustible e industria**
+
+```{r}
+#| message: false    
+#| warning: false    
+#| label: global-change   
+#| fig-global-change : "Emisiones globales de CO2 por combustible e industria"
+
+# Usando PowerBI  
+knitr::include_url("https://datawrapper.dwcdn.net/hADln/1/", height = 520) 
+```
+
+**Fuente de Datos:** Este gráfico se basa en datos del conjunto de datos de Our World in Data sobre emisiones globales de CO₂ por combustible e industria. [dataset](https://ourworldindata.org/grapher/co2-emissions-by-fuel-line)
+
+**Audiencia:** Esta visualización está dirigida a personas interesadas en temas relacionados con el medio ambiente.
+
+**Objetivo:** El gráfico tiene como objetivo mostrar la cantidad de energía generada por fuentes fósiles y renovables a lo largo del tiempo.
+
+**Mensaje:** La visualización ilustra cómo ha disminuido la generación de energía a partir de fuentes fósiles y ha aumentado el uso de energías renovables en los años recientes.
+
+**Tipo de Visualización:** Se ha utilizado una combinación de gráfico de areas
+
+**Herramientas:** Para la creación de este gráfico se utilizó Data Wrapper.
+
+## - Day 26: AI
+
+@fig-ai Perspectivas Globales sobre Impacto de la IA en la Sociedad por Grupo Demográfico
+
+![](imagenes/ia.png)
+
+**Fuente de Datos:** Este gráfico se basa en datos del conjunto de datos de Our World in Data sobre perspectivas globales acerca de la ia. [dataset](https://ourworldindata.org/artificial-intelligence#all-charts)
+
+**Audiencia:** Esta visualización está dirigida a personas interesadas en conocer acerca de los cambios de la ia y las perspectivas que tiene la sociedad sobre el tema.
+
+**Objetivo:** El gráfico tiene como objetivo mostrar la perspectiva que tiene la sociedad a nivel demográfico acerca de la ia.
+
+**Mensaje:** La visualización ilustra la perspectiva de la ia por grupo demográfico.
+
+**Tipo de Visualización:** Se ha utilizado un gráfico de barras acumulado para mostrar los datos de la votación.
+
+**Herramientas:** Para la creación de este gráfico se utilizó Excel para el análisis y creación del gráfico.
+
+## - Day 27: Good/bad
+
+![](imagenes/ratingGameofThrones.png)
+
+**Fuente de Datos:** Este gráfico se basa en datos de Kaggle de Games of Thrones [dataset](https://www.kaggle.com/datasets/iamsouravbanerjee/game-of-thrones-dataset)
+
+**Audiencia:** Esta visualización está dirigida a personas interesadas en conocer el reating de episodios.
+
+**Objetivo:** El gráfico tiene como objetivo mostrar la calidad de los episodios de Game of Thrones.
+
+**Mensaje:** La visualización muestra la puntuación de cada uno de los episodios por temporada.
+
+**Tipo de Visualización:** Se ha utilizado un gráfico de calor.
+
+**Herramientas:** Para la creación de este gráfico se utilizó Python
+
+## - Day 28: Trend
+
+![](imagenes/tendencia.png)
+
+**Fuente de Datos:** Este gráfico se basa en datos de Yahoo [dataset](https://finance.yahoo.com/quote/%5EGSPC/history/?guccounter=1&guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&guce_referrer_sig=AQAAAJS3lvbxlHRN_Fn8pLEZuWPhD9DPtP04iw1QvxlfzxVHTSWbfCe-sqA4oJVR68H5-3yF3Szbts-R8yKcVD4KP5AP0MOzxYQckLaMlL6RW7mlimBS8qRkiPS-92GeZafzGaQ5zGG3E1z_k4GDKBwOakyr_BxcdNX05msbn7DQDeRV) de SP500 para 2024
+
+**Audiencia:** Esta visualización está dirigida a personas interesadas en análisis de bolsa.
+
+**Objetivo:** El gráfico tiene como objetivo el permitir analizar los valores del SP500 para el 2024.
+
+**Mensaje:** La visualización muestra la tendencia principalmente a la alza para el SP500 en lo que va del 2024.
+
+**Tipo de Visualización:** Se ha utilizado un gráfico de vela.
+
+**Herramientas:** Para la creación de este gráfico se utilizó Python
+
+## - Day 29: Black'n White
+
+@fig-black-white **Población rural y urbana**
+
+```{r}
+#| message: false
+#| warning: false
+#| label: fig-black-white
+#| fig-black-white : "Población rural y urbana"  
+
+# Usando DataWrapper   
+
+knitr::include_url("https://datawrapper.dwcdn.net/JkWVL/2/", height = 750) 
+```
+
+**Fuente de Datos**: Este gráfico se basa en datos del World Urbanization Prospects 2018 de la División de Población de las Naciones Unidas, disponible en [Population UN](https://population.un.org/wup/). Este dataset recoge información sobre la evolución de la urbanización y las proyecciones de población en áreas urbanas y rurales a nivel mundial.
+
+**Audiencia**: La visualización está dirigida a expertos en urbanización, investigadores, responsables de políticas urbanas, y a todas las personas interesadas en analizar los cambios y tendencias en la distribución de la población global entre áreas urbanas y rurales.
+
+**Objetivo**: El gráfico tiene como objetivo ilustrar cómo la población mundial se ha ido concentrando cada vez más en áreas urbanas a lo largo del tiempo, proyectando cómo esta tendencia podría continuar en el futuro. Esto ofrece una visión clara del proceso de urbanización y sus implicaciones a nivel global.
+
+**Mensaje**: La visualización muestra la tendencia de la población hacia la urbanización, con una disminución constante en la proporción de población rural en contraste con el aumento de la población urbana. Esta transición es especialmente pronunciada en regiones en desarrollo, donde la urbanización ha crecido de manera acelerada en las últimas décadas.
+
+**Tipo de Visualización**: Se ha utilizado un gráfico de barras de pilas que permite visualizar la urbanización por país.
+
+**Herramientas**: Para la creación de este gráfico se utilizó DataWrapper
+
+## - Day 30: Five Thirty Eight
+
+![](imagenes/candidato.png)
+
+**Fuente de Datos:** Este gráfico se basa en el dataset de la pagina FiveThirtyEight [dataset](https://projects.fivethirtyeight.com/polls/president-general/2024/national/?ex_cid=abcpromo).
+
+**Audiencia:** Esta visualización está dirigido al publico general en EEUU para que cononozca como van sus candidatos en las diversas encuentas durante el 2024.
+
+**Objetivo:** El gráfico tiene como objetivo permitir conocer la tendencia de los votos en EEUU.
+
+**Mensaje:** La visualización demuestra que los candidatos se encuentran técnicamente empatados en los diferentes encuestas.
+
+**Tipo de Visualización:** Se ha utilizado un de linea y un gráfico de burbuja para mostrar los porcentajes.
+
+**Herramientas:** Para la creación de este gráfico se utilizó Python
+
+# 7. Conclusiones {#conclusiones}
+
+Despues de haber realizado el reto de #30DaysChartsChallenge se han obtenido las siguientes conclusiones:
+
+-   **Desarrollo de habilidades técnicas**: Participar en el reto te ha permitido usar una variedad de herramientas de visualización de datos, lo cual ha ampliado tus habilidades y te ha dado la oportunidad de experimentar con diferentes métodos y estilos gráficos.
+
+-   **Exploración de diferentes enfoques de visualización**: Cada día del reto ha sido una oportunidad para crear gráficos únicos, adaptando las herramientas a los requisitos y al mensaje que querías transmitir. Esto ha fortalecido tu capacidad de seleccionar el tipo de visualización adecuado para cada conjunto de datos.
+
+-   **Desafío creativo y de aprendizaje continuo**: El reto ha sido entretenido y desafiante, motivándote a buscar nuevas formas de visualizar la información y mantenerte constante en la práctica de la visualización de datos. Es un logro completar 30 días de trabajo creativo.
+
+-   **Conexión con la comunidad de datos**: Además, el reto te ha permitido ser parte de una comunidad de datos activa y motivada, donde has podido ver el trabajo de otros participantes y aprender de sus enfoques, herramientas y estilos.
